@@ -7,17 +7,17 @@ import (
 	"os"
 )
 
+var commandMap = map[string]func([]string){
+	"echo": echo,
+	"cd":   commands.Cd,
+	"ls":   commands.Ls,
+	"exit": exit,
+}
+
 func Execute(command parser.Command) {
-	switch command.Name {
-	case "echo":
-		echo(command.Args)
-	case "exit":
-		exit()
-	case "cd":
-		commands.Cd(command.Args)
-	case "ls":
-		commands.Ls(command.Args)
-	default:
+	if function, exists := commandMap[command.Name]; exists {
+		function(command.Args)
+	} else {
 		fmt.Printf("Unknown command: %s\n", command.Name)
 	}
 }
@@ -26,6 +26,6 @@ func echo(args []string) {
 	fmt.Println(args)
 }
 
-func exit() {
+func exit(args []string) {
 	os.Exit(0)
 }
